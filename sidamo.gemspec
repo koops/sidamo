@@ -19,7 +19,6 @@ Gem::Specification.new do |s|
     "README.md"
   ]
   s.files = [
-    ".rspec",
     "Gemfile",
     "Gemfile.lock",
     "LICENSE.txt",
@@ -28,7 +27,6 @@ Gem::Specification.new do |s|
     "VERSION",
     "lib/sidamo.rb",
     "sidamo.gemspec",
-    "spec/fixtures/doubler.js",
     "spec/fixtures/tripler.coffee",
     "spec/sidamo_spec.rb",
     "spec/spec_helper.rb",
