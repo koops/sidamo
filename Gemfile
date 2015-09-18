@@ -1,6 +1,6 @@
 source "http://rubygems.org"
 
-gem "therubyracer", '0.12.1'
+gem "therubyracer", '0.12.2'
 
 group :development do
   gem 'rspec', '~> 3.1.0'
