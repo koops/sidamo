@@ -1,4 +1,4 @@
-require 'v8'
+require 'mini_racer'
 
 class Sidamo
   attr_accessor :load_paths, :included_sources
@@ -8,23 +8,14 @@ class Sidamo
     @load_paths = path_strings.map{|s| Pathname.new(s)}.select(&:exist?).select(&:directory?)
     @included_sources = []
 
-    # Only works before the first context load!
-    constraints = V8::C::ResourceConstraints.new
-    constraints.set_max_young_space_size(v8Opts[:young_space_mb] * 1024 * 1024) if v8Opts[:young_space_mb]
-    constraints.set_max_old_space_size(v8Opts[:old_space_mb] * 1024 * 1024) if v8Opts[:old_space_mb]
-    constraints.set_max_executable_size(v8Opts[:executable_mb] * 1024 * 1024) if v8Opts[:executable_space_mb]
-    V8::C::SetResourceConstraints(constraints) if v8Opts[:young_space_mb] || v8Opts[:old_space_mb] || v8Opts[:executable_space_mb]
-
-    @stats = V8::C::HeapStatistics.new
-    
-    @v8 = V8::Context.new v8Opts
-    @v8['include'] = lambda {|this, source| include(source)}
+    @v8 = MiniRacer::Context.new
+    @v8.attach 'include', proc{|source| include(source)}
     
     include 'coffee-script'    
   end
 
   def load(path)
-    lock{ @v8.load path }
+    @v8.load path
   end
   
   def compile_source(coffee_path)
@@ -102,24 +93,6 @@ class Sidamo
     true
   end  
 
-  def [](key)
-    @v8[key]
-  end
-    
-  def []=(key, value)
-    @v8[key] = value
-  end
-  
-  def total_physical_size
-    V8::C::V8::GetHeapStatistics(@stats)
-    @stats.total_physical_size
-  end
-  
-  def used_heap_size
-    V8::C::V8::GetHeapStatistics(@stats)    
-    @stats.used_heap_size
-  end
-
   def collect_some_garbage
     V8::C::V8::IdleNotification()
   end
@@ -155,6 +128,8 @@ class Sidamo
   end
   
   def lock
+    yield
+    return
     result, exception = nil, nil
     V8::C::Locker() do
       begin
