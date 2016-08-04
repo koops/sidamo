@@ -14,6 +14,11 @@ class Sidamo
   def load(path)
     @v8.load path
   end
+
+  def bootstrap(filename)
+    files = File.readlines(filename).map(&:strip).reject(&:blank?).map{|file| File.join(File.dirname(filename), file)}
+    files.each{|file| include(file)}
+  end
   
   def include(source)
     return false if @included_sources.include? source
