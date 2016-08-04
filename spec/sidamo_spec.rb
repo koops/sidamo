@@ -31,25 +31,25 @@ describe Sidamo do
     subject.eval('double 2').should == 4
   end
   
-  it "should include js files" do
-    s = Sidamo.new({}, Pathname.new(fixture('tripler.coffee')).dirname)
-    s.include 'doubler'
-    s.eval('double 2').should == 4    
+  it "should include coffee files" do
+    s = Sidamo.new
+    s.include Pathname.new(fixture('tripler.coffee'))
+    s.eval('triple 2').should == 6
   end
   
   it 'should include files only once' do
-    s = Sidamo.new({}, Pathname.new(fixture('tripler.coffee')).dirname)
-    s.include("doubler").should be_truthy
-    s.included_sources.length.should == 2
+    s = Sidamo.new
+    s.include(Pathname.new(fixture('tripler.coffee'))).should be_truthy
+    s.included_sources.length.should == 1
     
-    s.include("doubler").should be_falsy
-    s.included_sources.length.should == 2    
+    s.include(Pathname.new(fixture('tripler.coffee'))).should be_falsy
+    s.included_sources.length.should == 1
   end
 
-  it "should include coffee files" do
-    s = Sidamo.new({}, Pathname.new(fixture('tripler.coffee')).dirname)
-    s.include 'tripler'
-    s.eval('triple 2').should == 6
+  it "should include js files" do
+    s = Sidamo.new
+    s.include Pathname.new(fixture('doubler.js'))
+    s.eval('double 2').should == 4
   end
   
   # it "should allow includes from within js" do
