@@ -1,3 +1,10 @@
+GIT
+  remote: https://github.com/discourse/mini_racer.git
+  revision: dbb4cef542e297af59143bed1fdbb4871a3afe72
+  specs:
+    mini_racer (0.1.4)
+      libv8 (~> 5.1)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -29,10 +36,8 @@ GEM
       semver
     json (1.8.3)
     jwt (1.5.1)
-    libv8 (5.0.71.48.3)
+    libv8 (5.2.361.43.1)
     mini_portile2 (2.1.0)
-    mini_racer (0.1.4)
-      libv8 (~> 5.0, < 5.1.11)
     multi_json (1.12.1)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
@@ -71,7 +76,7 @@ PLATFORMS
 DEPENDENCIES
   bundler
   jeweler
-  mini_racer (= 0.1.4)
+  mini_racer!
   rspec (~> 3.1.0)
 
 BUNDLED WITH
