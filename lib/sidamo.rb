@@ -44,6 +44,10 @@ class Sidamo
     return js_path
   end
 
+  def attach(name, proc)
+    @v8.attach name, proc
+  end
+
   def eval(coffee)
     @v8.eval compile(coffee, bare: true)
   end
