@@ -14,11 +14,6 @@ describe Sidamo do
     subject.compile?("->>").should be_falsy
   end
 
-  it "should bind ruby objects to the coffee environment" do
-    subject[:xyz] = 13
-    subject.eval('xyz').should == 13
-  end
-
   it "should work at the class level" do
     Sidamo.eval("((x) -> x * x)(2)").should == 4
     Sidamo.evaluate("((x) -> x * x)(3)").should == 9
@@ -44,10 +39,10 @@ describe Sidamo do
   
   it 'should include files only once' do
     s = Sidamo.new({}, Pathname.new(fixture('tripler.coffee')).dirname)
-    s.eval('include "doubler"').should be_truthy
+    s.include("doubler").should be_truthy
     s.included_sources.length.should == 2
     
-    s.eval('include "doubler"').should be_falsy
+    s.include("doubler").should be_falsy
     s.included_sources.length.should == 2    
   end
 
@@ -57,10 +52,10 @@ describe Sidamo do
     s.eval('triple 2').should == 6
   end
   
-  it "should allow includes from within js" do
-    s = Sidamo.new({}, Pathname.new(fixture('tripler.coffee')).dirname)
-    s.eval_js("include('tripler'); triple(4)").should == 12
-  end
+  # it "should allow includes from within js" do
+  #   s = Sidamo.new({}, Pathname.new(fixture('tripler.coffee')).dirname)
+  #   s.eval_js("include('tripler'); triple(4)").should == 12
+  # end
 
   it "should eval javascript" do
     subject.eval_js("f = function(){ return 3;}; f()").should == 3
@@ -73,23 +68,23 @@ describe Sidamo do
     subject.compile_js?("ka.blooey()").should be_truthy # not executing
   end
 
-  it "should dispose of its context when asked" do
-    subject.dispose
-  end
+  # it "should dispose of its context when asked" do
+  #   subject.dispose
+  # end
   
-  it "should give statistics" do
-    s = Sidamo.new
-    s.eval('1 + 1')
-    s.used_heap_size.should > 0
-    s.total_physical_size.should > 0
-  end
+  # it "should give statistics" do
+  #   s = Sidamo.new
+  #   s.eval('1 + 1')
+  #   s.used_heap_size.should > 0
+  #   s.total_physical_size.should > 0
+  # end
 
-  it "should take hints about when to collect garbage" do
-    s = Sidamo.new({young_space_mb: 8})
+  # it "should take hints about when to collect garbage" do
+  #   s = Sidamo.new({young_space_mb: 8})
 
-    s.eval_js('for(var i = 0; i < 10000; i++){new String("bozo")}')
-    before = s.used_heap_size
-    s.collect_some_garbage
-    s.used_heap_size.should < before
-  end
+  #   s.eval_js('for(var i = 0; i < 10000; i++){new String("bozo")}')
+  #   before = s.used_heap_size
+  #   s.collect_some_garbage
+  #   s.used_heap_size.should < before
+  # end
 end

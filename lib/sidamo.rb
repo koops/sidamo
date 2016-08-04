@@ -1,4 +1,5 @@
 require 'mini_racer'
+require 'json'
 
 class Sidamo
   attr_accessor :load_paths, :included_sources
@@ -9,9 +10,7 @@ class Sidamo
     @included_sources = []
 
     @v8 = MiniRacer::Context.new
-    @v8.attach 'include', proc{|source| include(source)}
-    
-    include 'coffee-script'    
+    include 'coffee-script'
   end
 
   def load(path)
@@ -60,7 +59,7 @@ class Sidamo
   end
 
   def eval(coffee)
-    @v8.eval(@v8.eval('CoffeeScript.compile').call(coffee, :bare => true))
+    @v8.eval compile(coffee, bare: true)
   end
 
   def eval_js(js)
@@ -69,14 +68,14 @@ class Sidamo
 
   alias_method :evaluate, :eval
 
-  def compile(coffee, options = {})
-    call 'CoffeeScript.compile', coffee, options
+  def compile(coffee, options={})
+    @v8.eval("CoffeeScript.compile(#{JSON.dump(coffee)}, #{JSON.dump(options)})")
   end
 
   def compile?(coffee)
     begin
       compile(coffee)
-    rescue ::V8::JSError => x
+    rescue MiniRacer::RuntimeError
       return false
     end
     true
@@ -85,21 +84,12 @@ class Sidamo
   # Syntax check
   def compile_js?(js)
     begin
-      @v8['_code'] = js
-      @v8.eval('new Function(_code)')
-    rescue ::V8::JSError => x
+      @v8.eval("new Function(#{JSON.dump(js)})")
+    rescue MiniRacer::RuntimeError
       return false
     end
     true
   end  
-
-  def collect_some_garbage
-    V8::C::V8::IdleNotification()
-  end
-  
-  def dispose
-    @v8.dispose
-  end
 
   def self.eval(coffee)
     new.eval(coffee)
@@ -120,29 +110,4 @@ class Sidamo
   def self.compile_js?(js)
     new.compile_js?(js)
   end
-
-  protected ########################################
-
-  def call(properties, *args)
-    @v8.eval(properties).call(*args)
-  end
-  
-  def lock
-    yield
-    return
-    result, exception = nil, nil
-    V8::C::Locker() do
-      begin
-        result = yield
-      rescue Exception => e
-        exception = e
-      end
-    end
-
-    if exception
-      raise exception
-    else
-      result
-    end
-  end  
 end
