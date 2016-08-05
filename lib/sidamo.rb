@@ -49,11 +49,20 @@ class Sidamo
   end
 
   def eval(coffee)
-    @v8.eval compile(coffee, bare: true)
+    eval_js compile(coffee, bare: true)
+  end
+
+  def run(coffee)
+    run_js compile(coffee, bare: true)
   end
 
   def eval_js(js)
     @v8.eval(js)
+  end
+
+  # avoid returning un-needed objects
+  def run_js(js)
+    @v8.eval("#{js}; null")
   end
 
   alias_method :evaluate, :eval

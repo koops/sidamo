@@ -26,6 +26,10 @@ describe Sidamo do
     subject.eval('a').should == 3
   end
 
+  it "should run js and always return nil" do
+    subject.run("{a: 1}").should be_nil
+  end
+
   it "should load js files" do
     subject.load fixture('doubler.js')
     subject.eval('double 2').should == 4
