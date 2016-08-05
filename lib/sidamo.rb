@@ -2,8 +2,12 @@ require 'mini_racer'
 require 'json'
 
 class Sidamo
-  attr_accessor :load_paths, :included_sources
-  
+  attr_accessor :included_sources
+
+  def self.snapshot(catalog)
+    MiniRacer::Snapshot.new catalog_files(catalog).map{|f| File.read(js_source(f))}.join("\n")
+  end
+
   def initialize(opts={})
     @included_sources = []
 
@@ -15,33 +19,37 @@ class Sidamo
     @v8.load path
   end
 
-  def bootstrap(filename)
-    files = File.readlines(filename).map(&:strip).reject(&:blank?).map{|file| File.join(File.dirname(filename), file)}
-    files.each{|file| include(file)}
+  def catalog_files(catalog)
+    File.readlines(catalog).map(&:strip).reject(&:blank?).map{|file| File.join(File.dirname(catalog), file)}
   end
-  
-  def include(source)
-    return false if @included_sources.include? source
 
+  def js_source(source)
     if File.extname(source) == '.coffee'
-      js_path = File.join File.dirname(source), File.basename(source, '.coffee') + ".js"
-      if File.exist?(js_path) && File.ctime(js_path) > File.ctime(source)
-        load js_path
-      else
-        load compile_source(source, js_path)
-      end
+      js_path = File.join(File.dirname(source), File.basename(source, '.coffee') + ".js")
+      compile_source(source, js_path) unless File.exist?(js_path) && File.ctime(js_path) > File.ctime(source)
+      js_path
     else
-      load source
+      source
     end
+  end
 
-    @included_sources.push source
-    return true
+  def bootstrap(catalog)
+    catalog_files(catalog).each{|source| include(source)}
+  end
+
+  def include(source)
+    if @included_sources.include? source
+      false
+    else
+      load js_source(source)
+      @included_sources.push source
+      return true
+    end
   end
 
   def compile_source(coffee_path, js_path)
     js = File.open(coffee_path){|f| compile(f.read, bare: true)}
     File.write(js_path, js)
-    return js_path
   end
 
   def attach(name, proc)
