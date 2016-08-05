@@ -37,7 +37,11 @@ class Sidamo
   end
 
   def self.compile(coffee, options={})
-    compiler.eval("CoffeeScript.compile(#{JSON.dump(coffee)}, #{JSON.dump(options)})")
+    if coffee.nil? || coffee.empty?
+      ''
+    else
+      compiler.eval("CoffeeScript.compile(#{JSON.dump(coffee)}, #{JSON.dump(options)})")
+    end
   end
 
   # Common, separate compiler v8 instance.

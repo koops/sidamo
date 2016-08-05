@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
   s.authors = ["Ryan Koopmans"]
-  s.date = "2016-08-04"
+  s.date = "2016-08-05"
   s.description = "Evaluate Coffeescript within Ruby.  Uses V8 via http://github.com/cowboyd/therubyracer."
   s.email = "koops@gmail.com"
   s.extra_rdoc_files = [
@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
     "VERSION",
     "lib/sidamo.rb",
     "sidamo.gemspec",
+    "spec/fixtures/snapshot",
     "spec/fixtures/tripler.coffee",
     "spec/sidamo_spec.rb",
     "spec/spec_helper.rb",
