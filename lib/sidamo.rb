@@ -30,6 +30,10 @@ class Sidamo
     @v8.eval("#{js}; null") # avoid returning un-needed objects
   end
 
+  def dispose
+    @v8.dispose
+  end
+
   alias_method :evaluate, :eval
 
   def bootstrap(catalog)

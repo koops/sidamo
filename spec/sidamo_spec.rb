@@ -55,9 +55,10 @@ describe Sidamo do
     s.eval('triple 2').should == 6
   end
 
-  # it "should dispose of its context when asked" do
-  #   subject.dispose
-  # end
+  it "should dispose of its context when asked" do
+    subject.dispose
+    expect { subject.eval('1 + 1') }.to raise_exception(MiniRacer::ContextDisposedError)
+  end
   
   # it "should give statistics" do
   #   s = Sidamo.new
