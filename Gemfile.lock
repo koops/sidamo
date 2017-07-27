@@ -31,11 +31,11 @@ GEM
       semver2
     json (2.1.0)
     jwt (1.5.6)
-    libv8 (5.3.332.38.5)
+    libv8 (5.9.211.38.1)
     mime-types (2.99.3)
     mini_portile2 (2.2.0)
-    mini_racer (0.1.10)
-      libv8 (~> 5.3)
+    mini_racer (0.1.12)
+      libv8 (~> 5.9)
     multi_json (1.12.1)
     multi_xml (0.6.0)
     multipart-post (2.0.0)
@@ -74,7 +74,7 @@ DEPENDENCIES
   bundler
   jeweler
   json (>= 2.0.0)
-  mini_racer (= 0.1.10)
+  mini_racer (= 0.1.12)
   rspec (~> 3.5)
 
 BUNDLED WITH
