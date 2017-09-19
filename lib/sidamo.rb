@@ -51,7 +51,7 @@ class Sidamo
   # Common, separate compiler v8 instance.
   def self.compiler
     @compilerV8 ||= MiniRacer::Context.new.tap do |v8|
-      v8.load File.join(File.dirname(__FILE__), '..', 'src', 'coffee-script.js')
+      v8.load File.join(File.dirname(__FILE__), '..', 'src', 'coffeescript.js')
     end
   end
 
